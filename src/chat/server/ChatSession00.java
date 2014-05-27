@@ -1,6 +1,7 @@
 package chat.server;
 
 import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -89,11 +90,15 @@ public abstract class ChatSession00 implements Runnable {
 	 * なお、コマンドは複数行の引数を持つことができ、最後に空行が来る。
 	 * @return コマンド (最初の要素) とその引数 (残りの要素)
 	 * @throws IOException 入出力に関する例外が発生
+	 * @throws EOFException 入力終了
 	 */
 	public String[] receiveCommand() throws IOException {
 		List<String> list = new ArrayList<String>();
-		String line;
-		while ((line = reader.readLine()) != null) {
+		while (true) {
+			String line = reader.readLine();
+			if (line == null) {
+				throw new EOFException("<- EOF");
+			}
 			ChatLogger.verboseLog("[" + sessionId + "] <- \"" + line + "\"");
 			if (line.length() == 0) {
 				break;
@@ -113,6 +118,8 @@ public abstract class ChatSession00 implements Runnable {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			writer = new PrintStream(socket.getOutputStream(), true, "UTF-8");
 			handleSession();
+		} catch (EOFException e) {
+			sessionLog(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

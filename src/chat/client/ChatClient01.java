@@ -39,40 +39,47 @@ public class ChatClient01 extends ChatClient00 {
 			writer.println("READ");
 			writer.println();
 
-			// 結果を受信する。
+			// 結果を受信し、表示する。
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-			// 結果の 1 行目 (メッセージの個数) を受信する。
-			String result = reader.readLine();
-			if (result == null) {
-				System.err.println("メッセージの個数を取得できません。");
-				return;
-			}
+			receiveMessages(reader);
+		}
+	}
 
-			// 結果をスペースで区切る。
-			String[] array = result.split(" ");
-			if (array.length != 2 || ! array[0].equals("READ")) {
-				System.err.println("メッセージの個数を取得できません。");
-				return;
-			}
+	/**
+	 * read コマンドの結果を受信し、表示する。
+	 * @param reader 結果の受信元
+	 * @throws IOException 入出力に関する例外が発生
+	 */
+	public void receiveMessages(BufferedReader reader) throws IOException {
+		// 結果の 1 行目 (メッセージの個数) を受信する。
+		String result = reader.readLine();
+		if (result == null) {
+			throw new EOFException("メッセージの個数を取得できません。");
+		}
 
-			// メッセージの個数を整数に変換する。
-			int num;
-			try {
-				num = Integer.parseInt(array[1]);
-			} catch (NumberFormatException e) {
-				System.err.println("メッセージの個数を整数に変換できません。");
-				return;
-			}
+		// 結果をスペースで区切る。
+		String[] array = result.split(" ");
+		if (array.length != 2 || ! array[0].equals("READ")) {
+			System.err.println("メッセージの個数を取得できません。");
+			return;
+		}
 
-			// num 個のメッセージを受信し、出力する。
-			for (int i = 0; i < num; i++) {
-				String message = reader.readLine();
-				if (message == null) {
-					System.err.println("メッセージが途中で来なくなりました。");
-					return;
-				}
-				System.out.println(message);
+		// メッセージの個数を整数に変換する。
+		int num;
+		try {
+			num = Integer.parseInt(array[1]);
+		} catch (NumberFormatException e) {
+			System.err.println("メッセージの個数を整数に変換できません。");
+			return;
+		}
+
+		// num 個のメッセージを受信し、出力する。
+		for (int i = 0; i < num; i++) {
+			String message = reader.readLine();
+			if (message == null) {
+				throw new EOFException("メッセージが途中で来なくなりました。");
 			}
+			System.out.println(message);
 		}
 	}
 
@@ -100,16 +107,28 @@ public class ChatClient01 extends ChatClient00 {
 
 			// 結果を受信する。
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-			String result = reader.readLine();
-			if (result == null) {
-				System.err.println("書き込みのお返事が来ません。");
-				return;
-			}
-			if (result.equals("WRITE OK")) {
-				System.out.println("書き込み成功しました。");
-			} else {
-				System.err.println("書き込み失敗しました。");
-			}
+			receiveResult(reader, "WRITE", "書き込み");
+		}
+	}
+
+	/**
+	 * コマンドの実行結果を受信する。
+	 * @param reader 結果の受信元
+	 * @param command コマンド
+	 * @param commandName コマンドの表示名
+	 * @return 成功したら true、失敗したら false
+	 * @throws IOException 入出力に関する例外が発生
+	 */
+	public boolean receiveResult(BufferedReader reader, String command, String commandName) throws IOException {
+		String result = reader.readLine();
+		if (result == null) {
+			throw new EOFException(commandName + "のお返事が来ません。");
+		} else if (result.equals(command + " OK")) {
+			System.out.println(commandName + "成功しました。");
+			return true;
+		} else {
+			System.err.println(commandName + "失敗しました。");
+			return false;
 		}
 	}
 

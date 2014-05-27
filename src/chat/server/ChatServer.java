@@ -75,8 +75,10 @@ public class ChatServer {
 			while (true) {
 				// 接続されたら、セッションを生成・実行する。
 				Socket socket = listener.accept();
-				ChatSession01 session = new ChatSession01(this, socket);
-				session.run();
+				//ChatSession01 session = new ChatSession01(this, socket);
+				//session.run();
+				ChatSession02 session = new ChatSession02(this, socket);
+				new Thread(session).start();
 			}
 		}
 	}
