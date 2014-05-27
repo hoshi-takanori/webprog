@@ -27,11 +27,6 @@ public class WebServer {
 	private int port;
 
 	/**
-	 * デバッグモードなら true。
-	 */
-	private boolean debugMode;
-
-	/**
 	 * サーブレットたち。
 	 */
 	private Map<String, Servlet> servlets;
@@ -64,21 +59,11 @@ public class WebServer {
 		ResourceBundle settings = ResourceBundle.getBundle(settingName);
 		port = Integer.parseInt(settings.getString("SERVER_PORT"));
 		try {
-			debugMode = Boolean.parseBoolean(settings.getString("DEBUG_MODE"));
+			WebLogger.debugMode = Boolean.parseBoolean(settings.getString("DEBUG_MODE"));
 		} catch (MissingResourceException e) {
-			debugMode = false;
+			WebLogger.debugMode = false;
 		}
 		servlets = new LinkedHashMap<String, Servlet>();
-	}
-
-	/**
-	 * デバッグモードなら、ログメッセージを標準出力に出力する。
-	 * @param message ログメッセージ
-	 */
-	public void debugLog(String message) {
-		if (debugMode) {
-			System.out.println(message);
-		}
 	}
 
 	/**
@@ -87,7 +72,7 @@ public class WebServer {
 	 * @param servlet サーブレット
 	 */
 	public void addServlet(String pattern, Servlet servlet) {
-		debugLog("adding " + servlet.getName());
+		WebLogger.log("adding " + servlet.getName());
 		servlets.put(pattern, servlet);
 	}
 
@@ -117,7 +102,7 @@ public class WebServer {
 	 * Web サーバーの処理を開始する。
 	 */
 	public void start() {
-		debugLog("opening port " + port);
+		WebLogger.log("opening port " + port);
 		try (ServerSocket listener = new ServerSocket(port)) {
 			while (true) {
 				Socket socket = listener.accept();

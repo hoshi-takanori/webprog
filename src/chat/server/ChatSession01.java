@@ -38,7 +38,7 @@ public class ChatSession01 extends ChatSession00 {
 	 */
 	public void handleRead() {
 		List<ChatMessage> messages = server.getMessages(0);
-		ChatLogger.log("read " + messages.size() + " messages");
+		sessionLog("read " + messages.size() + " messages");
 		writer.println(messages.size());
 		for (ChatMessage message : messages) {
 			writer.println(message);
@@ -53,7 +53,7 @@ public class ChatSession01 extends ChatSession00 {
 		if (array.length == 3 && array[1].length() > 0 && array[2].length() > 0) {
 			ChatMessage message = new ChatMessage(array[1], array[2]);
 			server.addMessage(message);
-			ChatLogger.log("write " + message);
+			sessionLog("write " + message);
 			writer.println("OK");
 		} else {
 			writer.println("ERROR");

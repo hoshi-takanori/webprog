@@ -75,7 +75,6 @@ public class ChatServer {
 			while (true) {
 				// 接続されたら、セッションを生成・実行する。
 				Socket socket = listener.accept();
-				ChatLogger.log("connected from " + socket.getInetAddress());
 				ChatSession01 session = new ChatSession01(this, socket);
 				session.run();
 			}

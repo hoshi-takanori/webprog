@@ -88,16 +88,16 @@ public class WebConnection implements Runnable {
 			Request request = getRequest();
 			WebResponse response = new WebResponse();
 			if (request == null) {
-				WebServer.getInstance().debugLog("request = null");
+				WebLogger.log("request = null");
 				response.setError(Response.STATUS_BAD_REQUEST, "request == null");
 			} else {
-				WebServer.getInstance().debugLog("request = " + request.getMethod() + " " + request.getPath());
+				WebLogger.log("request = " + request.getMethod() + " " + request.getPath());
 				Servlet servlet = WebServer.getInstance().findServlet(request);
 				if (servlet == null) {
-					WebServer.getInstance().debugLog("servlet = null");
+					WebLogger.log("servlet = null");
 					response.setError(Response.STATUS_NOT_FOUND, "servlet not found");
 				} else {
-					WebServer.getInstance().debugLog("servlet = " + servlet.getName());
+					WebLogger.log("servlet = " + servlet.getName());
 					try {
 						servlet.service(request, response);
 					} catch (Exception e) {
@@ -105,7 +105,7 @@ public class WebConnection implements Runnable {
 					}
 				}
 			}
-			WebServer.getInstance().debugLog("response = " + response.getStatus());
+			WebLogger.log("response = " + response.getStatus());
 			if (response.getStatus() == null) {
 				response.setError(Response.STATUS_ERROR, "response status == null");
 			} else if (response.getStatus().equals(WebResponse.STATUS_SHUTDOWN)) {
