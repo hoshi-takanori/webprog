@@ -13,13 +13,13 @@ import web.servlet.Request;
 import web.servlet.Servlet;
 
 /**
- * 単純なサーブレットコンテナ (らしきもの)。
+ * 単純な Web サーバー (らしきもの)。
  */
 public class WebServer {
 	/**
 	 * 唯一のインスタンス (シングルトンパターン)。
 	 */
-	private static WebServer container;
+	private static WebServer server;
 
 	/**
 	 * ポート番号。
@@ -42,10 +42,10 @@ public class WebServer {
 	 * @return 唯一のインスタンス
 	 */
 	public static WebServer createInstance(String settingName) {
-		if (container == null) {
-			container = new WebServer(settingName);
+		if (server == null) {
+			server = new WebServer(settingName);
 		}
-		return container;
+		return server;
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class WebServer {
 	 * @return 唯一のインスタンス
 	 */
 	public static WebServer getInstance() {
-		return container;
+		return server;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class WebServer {
 	 */
 	private WebServer(String settingName) {
 		ResourceBundle settings = ResourceBundle.getBundle(settingName);
-		port = Integer.parseInt(settings.getString("CONTAINER_PORT"));
+		port = Integer.parseInt(settings.getString("SERVER_PORT"));
 		try {
 			debugMode = Boolean.parseBoolean(settings.getString("DEBUG_MODE"));
 		} catch (MissingResourceException e) {
@@ -114,7 +114,7 @@ public class WebServer {
 	}
 
 	/**
-	 * サーブレットコンテナの処理を開始する。
+	 * Web サーバーの処理を開始する。
 	 */
 	public void start() {
 		debugLog("opening port " + port);

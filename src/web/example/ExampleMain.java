@@ -11,10 +11,10 @@ public class ExampleMain {
 	 * @param args コマンド行引数
 	 */
 	public static void main(String[] args) {
-		WebServer container = WebServer.getInstance();
-		container.addServlet("/", new AdminServlet());
-		container.addServlet("/hello", new HelloServlet());
-		container.addServlet("/files/.*", new FileServlet());
-		container.start();
+		WebServer server = WebServer.createInstance("web");
+		server.addServlet("/", new AdminServlet());
+		server.addServlet("/hello", new HelloServlet());
+		server.addServlet("/.*", new FileServlet("public"));
+		server.start();
 	}
 }

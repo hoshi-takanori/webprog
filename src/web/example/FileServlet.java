@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import web.servlet.Request;
 import web.servlet.Response;
@@ -14,14 +15,21 @@ import web.servlet.Servlet;
  */
 public class FileServlet implements Servlet {
 	/**
+	 * ファイルの置き場所。
+	 */
+	private File basePath;
+
+	/**
 	 * 拡張子とファイルタイプの対応表。
 	 */
-	private HashMap<String, String> fileTypes;
+	private Map<String, String> fileTypes;
 
 	/**
 	 * コンストラクタ。
 	 */
-	public FileServlet() {
+	public FileServlet(String basePath) {
+		this.basePath = new File(basePath);
+
 		fileTypes = new HashMap<String, String>();
 		fileTypes.put("txt", "text/plain");
 		fileTypes.put("htm", "text/html");
@@ -30,6 +38,7 @@ public class FileServlet implements Servlet {
 		fileTypes.put("js", "text/javascript");
 		fileTypes.put("xml", "text/xml");
 		fileTypes.put("java", "text/plain");
+		fileTypes.put("sql", "text/plain");
 		fileTypes.put("bmp", "image/bmp");
 		fileTypes.put("gif", "image/gif");
 		fileTypes.put("jpg", "image/jpeg");
@@ -71,7 +80,7 @@ public class FileServlet implements Servlet {
 	 */
 	@Override
 	public void service(Request request, Response response) {
-		File file = new File(new File("."), request.getPath());
+		File file = new File(basePath, request.getPath());
 		if (file.isDirectory()) {
 			String[] list = file.list();
 			response.setStatus(Response.STATUS_OK);
