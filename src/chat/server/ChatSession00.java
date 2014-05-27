@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * チャットの接続を処理するやつ、その 0 (抽象クラス)。
@@ -23,22 +25,22 @@ public abstract class ChatSession00 implements Runnable {
 	/**
 	 * チャットサーバー。
 	 */
-	protected ChatServer server;
+	private ChatServer server;
 
 	/**
 	 * 接続のソケット。
 	 */
-	protected Socket socket;
+	private Socket socket;
 
 	/**
 	 * 接続の入力を読むやつ。
 	 */
-	protected BufferedReader reader;
+	private BufferedReader reader;
 
 	/**
 	 * 接続の出力に書くやつ。
 	 */
-	protected PrintStream writer;
+	private PrintStream writer;
 
 	/**
 	 * コンストラクタ。
@@ -58,11 +60,47 @@ public abstract class ChatSession00 implements Runnable {
 	public abstract void handleSession() throws IOException;
 
 	/**
+	 * チャットサーバーを取得する。
+	 * @return チャットサーバー
+	 */
+	public ChatServer getServer() {
+		return server;
+	}
+
+	/**
 	 * セッション ID 付きでログを出力する。
 	 * @param message ログのメッセージ
 	 */
 	public void sessionLog(String message) {
 		ChatLogger.log("[" + sessionId + "] " + message);
+	}
+
+	/**
+	 * クライアントに 1 行送信する。
+	 * @param line 送信する内容
+	 */
+	public void sendLine(String line) {
+		ChatLogger.verboseLog("[" + sessionId + "] -> \"" + line + "\"");
+		writer.println(line);
+	}
+
+	/**
+	 * クライアントからのコマンドを読み込み、各行を配列に入れて返す。
+	 * なお、コマンドは複数行の引数を持つことができ、最後に空行が来る。
+	 * @return コマンド (最初の要素) とその引数 (残りの要素)
+	 * @throws IOException 入出力に関する例外が発生
+	 */
+	public String[] receiveCommand() throws IOException {
+		List<String> list = new ArrayList<String>();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			ChatLogger.verboseLog("[" + sessionId + "] <- \"" + line + "\"");
+			if (line.length() == 0) {
+				break;
+			}
+			list.add(line);
+		}
+		return list.toArray(new String[0]);
 	}
 
 	/**
@@ -75,7 +113,7 @@ public abstract class ChatSession00 implements Runnable {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			writer = new PrintStream(socket.getOutputStream(), true, "UTF-8");
 			handleSession();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		sessionLog("connection closed");

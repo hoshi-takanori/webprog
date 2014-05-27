@@ -23,40 +23,55 @@ public class ChatSession01 extends ChatSession00 {
 	 */
 	@Override
 	public void handleSession() throws IOException {
-		String line = reader.readLine();
-		if (line.equals("READ")) {
-			handleRead();
-		} else if (line.startsWith("WRITE")) {
-			handleWrite(line);
+		String[] command = receiveCommand();
+		if (command.length == 0) {
+			sessionLog("empty command");
 		} else {
-			writer.println("UNKNOWN COMMAND");
+			handleCommand(command);
+		}
+	}
+
+	/**
+	 * コマンドを実行する。
+	 * @param command コマンドとその引数
+	 */
+	public void handleCommand(String[] command) {
+		if (command[0].equals("READ")) {
+			handleRead(command);
+		} else if (command[0].equals("WRITE")) {
+			handleWrite(command);
+		} else {
+			sessionLog("unknown command");
 		}
 	}
 
 	/**
 	 * READ コマンドを実行する。
+	 * その 1 では、引数は無視して、すべてのメッセージを表示する。
+	 * @param command コマンドとその引数
 	 */
-	public void handleRead() {
-		List<ChatMessage> messages = server.getMessages(0);
+	public void handleRead(String[] command) {
+		List<ChatMessage> messages = getServer().getMessages(0);
 		sessionLog("read " + messages.size() + " messages");
-		writer.println(messages.size());
+		sendLine("READ " + messages.size());
 		for (ChatMessage message : messages) {
-			writer.println(message);
+			sendLine(message.toString());
 		}
 	}
 
 	/**
 	 * WRITE コマンドを実行する。
+	 * その 1 では、引数はユーザー名とメッセージの内容。
+	 * @param command コマンドとその引数
 	 */
-	public void handleWrite(String line) {
-		String[] array = line.split(" ", 3);
-		if (array.length == 3 && array[1].length() > 0 && array[2].length() > 0) {
-			ChatMessage message = new ChatMessage(array[1], array[2]);
-			server.addMessage(message);
+	public void handleWrite(String[] command) {
+		if (command.length == 3) {
+			ChatMessage message = new ChatMessage(command[1], command[2]);
+			getServer().addMessage(message);
 			sessionLog("write " + message);
-			writer.println("OK");
+			sendLine("WRITE OK");
 		} else {
-			writer.println("ERROR");
+			sendLine("WRITE ERROR");
 		}
 	}
 }

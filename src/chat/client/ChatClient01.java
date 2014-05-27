@@ -37,6 +37,7 @@ public class ChatClient01 extends ChatClient00 {
 			// READ コマンドを送信する。
 			PrintStream writer = new PrintStream(socket.getOutputStream(), true, "UTF-8");
 			writer.println("READ");
+			writer.println();
 
 			// 結果を受信する。
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
@@ -47,10 +48,17 @@ public class ChatClient01 extends ChatClient00 {
 				return;
 			}
 
+			// 結果をスペースで区切る。
+			String[] array = result.split(" ");
+			if (array.length != 2 || ! array[0].equals("READ")) {
+				System.err.println("メッセージの個数を取得できません。");
+				return;
+			}
+
 			// メッセージの個数を整数に変換する。
 			int num;
 			try {
-				num = Integer.parseInt(result);
+				num = Integer.parseInt(array[1]);
 			} catch (NumberFormatException e) {
 				System.err.println("メッセージの個数を整数に変換できません。");
 				return;
@@ -85,7 +93,10 @@ public class ChatClient01 extends ChatClient00 {
 		try (Socket socket = new Socket(host, port)) {
 			// WRITE コマンドを送信する。
 			PrintStream writer = new PrintStream(socket.getOutputStream(), true, "UTF-8");
-			writer.println("WRITE " + user + " " + message);
+			writer.println("WRITE");
+			writer.println(user);
+			writer.println(message);
+			writer.println();
 
 			// 結果を受信する。
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
@@ -94,7 +105,7 @@ public class ChatClient01 extends ChatClient00 {
 				System.err.println("書き込みのお返事が来ません。");
 				return;
 			}
-			if (result.equals("OK")) {
+			if (result.equals("WRITE OK")) {
 				System.out.println("書き込み成功しました。");
 			} else {
 				System.err.println("書き込み失敗しました。");
