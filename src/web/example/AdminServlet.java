@@ -11,6 +11,19 @@ import web.servlet.Servlet;
  */
 public class AdminServlet implements Servlet {
 	/**
+	 * Web サーバー。
+	 */
+	private WebServer server;
+
+	/**
+	 * コンストラクタ。
+	 * @param server Web サーバー
+	 */
+	public AdminServlet(WebServer server) {
+		this.server = server;
+	}
+
+	/**
 	 * サーブレットの名前を返す。
 	 * @return サーブレットの名前
 	 */
@@ -36,7 +49,7 @@ public class AdminServlet implements Servlet {
 		} else {
 			view.printTag("p", "Servlets are:");
 			view.printOpenTag("ul");
-			for (Servlet servlet : WebServer.getInstance().getServlets()) {
+			for (Servlet servlet : server.getServlets()) {
 				view.printTag("li", servlet.getName());
 			}
 			view.printCloseTag("ul");

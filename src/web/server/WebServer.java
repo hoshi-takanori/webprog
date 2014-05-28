@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import web.servlet.Request;
 import web.servlet.Servlet;
@@ -16,11 +18,6 @@ import web.servlet.Servlet;
  * 単純な Web サーバー (らしきもの)。
  */
 public class WebServer {
-	/**
-	 * 唯一のインスタンス (シングルトンパターン)。
-	 */
-	private static WebServer server;
-
 	/**
 	 * ポート番号。
 	 */
@@ -32,30 +29,10 @@ public class WebServer {
 	private Map<String, Servlet> servlets;
 
 	/**
-	 * 唯一のインスタンスを生成する。
-	 * @param settingName 設定ファイルの名前
-	 * @return 唯一のインスタンス
-	 */
-	public static WebServer createInstance(String settingName) {
-		if (server == null) {
-			server = new WebServer(settingName);
-		}
-		return server;
-	}
-
-	/**
-	 * 唯一のインスタンスを返す。
-	 * @return 唯一のインスタンス
-	 */
-	public static WebServer getInstance() {
-		return server;
-	}
-
-	/**
 	 * コンストラクタ。
 	 * @param settingName 設定ファイルの名前
 	 */
-	private WebServer(String settingName) {
+	public WebServer(String settingName) {
 		ResourceBundle settings = ResourceBundle.getBundle(settingName);
 		port = Integer.parseInt(settings.getString("SERVER_PORT"));
 		try {
@@ -104,10 +81,11 @@ public class WebServer {
 	public void start() {
 		WebLogger.log("opening port " + port);
 		try (ServerSocket listener = new ServerSocket(port)) {
+			Executor executor = Executors.newCachedThreadPool();
 			while (true) {
 				Socket socket = listener.accept();
-				WebConnection connection = new WebConnection(socket);
-				new Thread(connection).start();
+				WebConnection connection = new WebConnection(this, socket);
+				executor.execute(connection);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

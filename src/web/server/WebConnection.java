@@ -14,6 +14,11 @@ import web.servlet.Servlet;
  * WebServer への接続を処理する。
  */
 public class WebConnection implements Runnable {
+	 /**
+	  * Web サーバー。
+	  */
+	 private WebServer server;
+
 	/**
 	 * 接続のソケット。
 	 */
@@ -21,9 +26,11 @@ public class WebConnection implements Runnable {
 
 	/**
 	 * コンストラクタ。
+	 * @param server Web サーバー
 	 * @param socket 接続のソケット
 	 */
-	public WebConnection(Socket socket) {
+	public WebConnection(WebServer server, Socket socket) {
+		this.server = server;
 		this.socket = socket;
 	}
 
@@ -92,7 +99,7 @@ public class WebConnection implements Runnable {
 				response.setError(Response.STATUS_BAD_REQUEST, "request == null");
 			} else {
 				WebLogger.log("request = " + request.getMethod() + " " + request.getPath());
-				Servlet servlet = WebServer.getInstance().findServlet(request);
+				Servlet servlet = server.findServlet(request);
 				if (servlet == null) {
 					WebLogger.log("servlet = null");
 					response.setError(Response.STATUS_NOT_FOUND, "servlet not found");

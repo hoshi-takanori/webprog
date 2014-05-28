@@ -11,8 +11,8 @@ public class ExampleMain {
 	 * @param args コマンド行引数
 	 */
 	public static void main(String[] args) {
-		WebServer server = WebServer.createInstance("web");
-		server.addServlet("/", new AdminServlet());
+		WebServer server = new WebServer("web");
+		server.addServlet("/", new AdminServlet(server));
 		server.addServlet("/hello", new HelloServlet());
 		server.addServlet("/.*", new FileServlet("public"));
 		server.start();
