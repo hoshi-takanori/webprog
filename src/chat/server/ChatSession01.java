@@ -44,6 +44,7 @@ public class ChatSession01 extends ChatSession00 {
 			handleWrite(command);
 		} else {
 			sessionLog("unknown command");
+			sendLine("UNKNOWN COMMAND");
 		}
 	}
 

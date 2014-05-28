@@ -5,11 +5,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * 簡単なチャットサーバー。
  */
-public class ChatServer {
+public class ChatServer extends Observable {
 	/**
 	 * デフォルトの待ち受けポート番号。
 	 */
@@ -55,6 +58,10 @@ public class ChatServer {
 		synchronized (messages) {
 			messages.add(message);
 		}
+
+		// メッセージの追加を通知する (ChatSession03 用)。
+		setChanged();
+		notifyObservers(message);
 	}
 
 	/**
@@ -72,13 +79,16 @@ public class ChatServer {
 
 		// ポートを開き、接続を待ち受ける。
 		try (ServerSocket listener = new ServerSocket(port)) {
+			Executor executor = Executors.newCachedThreadPool();
 			while (true) {
 				// 接続されたら、セッションを生成・実行する。
 				Socket socket = listener.accept();
 				//ChatSession01 session = new ChatSession01(this, socket);
 				//session.run();
-				ChatSession02 session = new ChatSession02(this, socket);
-				new Thread(session).start();
+				//ChatSession02 session = new ChatSession02(this, socket);
+				//new Thread(session).start();
+				ChatSession03 session = new ChatSession03(this, socket);
+				executor.execute(session);
 			}
 		}
 	}

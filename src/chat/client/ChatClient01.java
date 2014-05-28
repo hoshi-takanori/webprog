@@ -20,8 +20,8 @@ public class ChatClient01 extends ChatClient00 {
 	public void handleCommand(String line) throws IOException {
 		if (line.equals("read")) {
 			handleRead();
-		} else if (line.equals("write")) {
-			handleWrite();
+		} else if (line.equals("write") || line.startsWith("write ")) {
+			handleWrite(line);
 		} else {
 			System.err.println("そんなコマンドは知りません。");
 		}
@@ -85,15 +85,23 @@ public class ChatClient01 extends ChatClient00 {
 
 	/**
 	 * write コマンドを実行する。
+	 * @param line コマンドライン
 	 * @throws IOException 入出力に関する例外が発生
 	 */
-	public void handleWrite() throws IOException {
-		// メッセージの内容を入力する。
-		System.out.print("write> ");
-		System.out.flush();
-		String message = stdinReader.readLine();
-		if (message == null) {
-			throw new EOFException("メッセージの入力中に終了します。");
+	public void handleWrite(String line) throws IOException {
+		// メッセージの内容をコマンドラインから取得する。
+		String[] array = line.split(" ", 2);
+		String message;
+		if (array.length == 2) {
+			message = array[1];
+		} else {
+			// メッセージの内容を入力する。
+			System.out.print("write> ");
+			System.out.flush();
+			message = stdinReader.readLine();
+			if (message == null) {
+				throw new EOFException("メッセージの入力中に終了します。");
+			}
 		}
 
 		// サーバーに接続する。
