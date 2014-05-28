@@ -1,7 +1,6 @@
 package chat.client;
 
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -97,18 +96,12 @@ public class ChatClient02 extends ChatClient01 {
 	}
 
 	/**
-	 * write コマンドを実行する。
+	 * メッセージを送信する。
+	 * @param message メッセージの内容
 	 * @throws IOException 入出力に関する例外が発生
 	 */
-	public void handleWrite() throws IOException {
-		// メッセージの内容を入力する。
-		System.out.print("write> ");
-		System.out.flush();
-		String message = stdinReader.readLine();
-		if (message == null) {
-			throw new EOFException("メッセージの入力中に終了します。");
-		}
-
+	@Override
+	public void writeMessage(String message) throws IOException {
 		// WRITE コマンドを送信する。
 		writer.println("WRITE");
 		writer.println(message);

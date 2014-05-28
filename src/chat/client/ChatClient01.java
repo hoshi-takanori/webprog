@@ -104,6 +104,16 @@ public class ChatClient01 extends ChatClient00 {
 			}
 		}
 
+		// メッセージを送信する。
+		writeMessage(message);
+	}
+
+	/**
+	 * メッセージを送信する。
+	 * @param message メッセージの内容
+	 * @throws IOException 入出力に関する例外が発生
+	 */
+	public void writeMessage(String message) throws IOException {
 		// サーバーに接続する。
 		try (Socket socket = new Socket(host, port)) {
 			// WRITE コマンドを送信する。
