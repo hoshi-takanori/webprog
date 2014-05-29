@@ -37,8 +37,10 @@ public class WebServer {
 		port = Integer.parseInt(settings.getString("SERVER_PORT"));
 		try {
 			WebLogger.debugMode = Boolean.parseBoolean(settings.getString("DEBUG_MODE"));
+			WebLogger.verboseMode = Boolean.parseBoolean(settings.getString("VERBOSE_MODE"));
 		} catch (MissingResourceException e) {
 			WebLogger.debugMode = false;
+			WebLogger.verboseMode = false;
 		}
 		servlets = new LinkedHashMap<String, Servlet>();
 	}

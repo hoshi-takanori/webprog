@@ -46,6 +46,7 @@ public class WebConnection implements Runnable {
 		if (line == null) {
 			return null;
 		}
+		WebLogger.verboseLog("<- \"" + line + "\"");
 		String[] array = line.split(" ");
 		if (array.length < 2 || array.length > 3) {
 			return null;
@@ -57,7 +58,9 @@ public class WebConnection implements Runnable {
 				line = reader.readLine();
 				if (line == null) {
 					return null;
-				} else if (line.length() == 0) {
+				}
+				WebLogger.verboseLog("<- \"" + line + "\"");
+				if (line.length() == 0) {
 					break;
 				} else {
 					array = line.split(":", 2);
@@ -77,7 +80,9 @@ public class WebConnection implements Runnable {
 				char[] buffer = new char[length];
 				length = reader.read(buffer);
 				if (length > 0 && request.getMethod().equals(Request.METHOD_POST)) {
-					request.parseParameters(new String(buffer, 0, length));
+					String body = new String(buffer, 0, length);
+					WebLogger.verboseLog("<- \"" + body + "\"");
+					request.parseParameters(body);
 				}
 			}
 		}

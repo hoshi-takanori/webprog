@@ -198,19 +198,25 @@ public class WebResponse implements Response {
 	 * @throws IOException 入出力に関する問題が発生した場合
 	 */
 	public void writeTo(PrintStream stream, boolean headerOnly) throws IOException {
+		WebLogger.verboseLog("-> \"" + "HTTP/1.0 " + status + "\"");
 		stream.println("HTTP/1.0 " + status);
 		for (String name : headers.keySet()) {
+			WebLogger.verboseLog("-> \"" + name + ": " + headers.get(name) + "\"");
 			stream.println(name + ": " + headers.get(name));
 		}
 		for (String cookie : cookies) {
+			WebLogger.verboseLog("-> \"" + "Set-Cookie: " + cookie + "\"");
 			stream.println("Set-Cookie: " + cookie);
 		}
+		WebLogger.verboseLog("-> \"" + "\"");
 		stream.println();
 
 		if (! headerOnly) {
 			if (bytes == null) {
+				WebLogger.verboseLog("-> body " + buffer.length() + " characters");
 				stream.print(buffer.toString());
 			} else {
+				WebLogger.verboseLog("-> body " + bytes.length + " bytes");
 				stream.write(bytes);
 			}
 		}
