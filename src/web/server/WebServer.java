@@ -86,6 +86,7 @@ public class WebServer {
 			Executor executor = Executors.newCachedThreadPool();
 			while (true) {
 				Socket socket = listener.accept();
+				WebLogger.log("connected from " + socket.getInetAddress());
 				WebConnection connection = new WebConnection(this, socket);
 				executor.execute(connection);
 			}
