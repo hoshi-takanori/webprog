@@ -44,6 +44,7 @@ public class FileServlet implements Servlet {
 		fileTypes.put("jpg", "image/jpeg");
 		fileTypes.put("jpeg", "image/jpeg");
 		fileTypes.put("png", "image/png");
+		fileTypes.put("ico", "image/x-icon");
 	}
 
 	/**
@@ -81,6 +82,12 @@ public class FileServlet implements Servlet {
 	@Override
 	public void service(Request request, Response response) {
 		File file = new File(basePath, request.getPath());
+		if (file.isDirectory()) {
+			File index = new File(file, "index.html");
+			if (index.isFile()) {
+				file = index;
+			}
+		}
 		if (file.isDirectory()) {
 			String[] list = file.list();
 			response.setStatus(Response.STATUS_OK);

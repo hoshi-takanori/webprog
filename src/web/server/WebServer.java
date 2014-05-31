@@ -3,7 +3,6 @@ package web.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -59,8 +58,8 @@ public class WebServer {
 	 * サーブレットたちを返す。
 	 * @return サーブレットたち
 	 */
-	public Collection<Servlet> getServlets() {
-		return servlets.values();
+	public Map<String, Servlet> getServlets() {
+		return servlets;
 	}
 
 	/**

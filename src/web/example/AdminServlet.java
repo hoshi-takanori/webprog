@@ -49,8 +49,13 @@ public class AdminServlet implements Servlet {
 		} else {
 			view.printTag("p", "Servlets are:");
 			view.printOpenTag("ul");
-			for (Servlet servlet : server.getServlets()) {
-				view.printTag("li", servlet.getName());
+			for (String pattern : server.getServlets().keySet()) {
+				Servlet servlet = server.getServlets().get(pattern);
+				if (pattern.matches("^[-\\w_/]+$")) {
+					view.printTag("li", view.linkTag(servlet.getName(), pattern));
+				} else {
+					view.printTag("li", servlet.getName());
+				}
 			}
 			view.printCloseTag("ul");
 			view.printOpenTag("form", "method", "POST");
