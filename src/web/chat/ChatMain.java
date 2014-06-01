@@ -14,7 +14,6 @@ public class ChatMain {
 	public static void main(String[] args) {
 		WebServer server = new WebServer("web");
 		server.addServlet("/", new ChatServlet());
-		server.addServlet("/read", new ChatReadServlet());
 		server.addServlet("/write", new ChatWriteServlet());
 		server.addServlet("/.*", new FileServlet("public"));
 		server.start();
