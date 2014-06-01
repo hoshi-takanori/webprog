@@ -26,7 +26,7 @@ public class ChatWriteServlet implements Servlet {
 	@Override
 	public void service(Request request, Response response) {
 		BasicView view = new BasicView(response);
-		view.printHead(getName());
+		view.printHead(getName(), view.cssLinkTag("/style.css"));
 		response.println("<p>この中身を何とかする。</p>");
 		view.printTail();
 	}

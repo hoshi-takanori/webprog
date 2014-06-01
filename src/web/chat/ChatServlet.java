@@ -26,7 +26,7 @@ public class ChatServlet implements Servlet {
 	@Override
 	public void service(Request request, Response response) {
 		BasicView view = new BasicView(response);
-		view.printHead(getName());
+		view.printHead(getName(), view.cssLinkTag("/style.css"));
 		response.println("<a href=\"/read\">よむ</a>");
 		response.println("<a href=\"/write\">かく</a>");
 		view.printTail();
