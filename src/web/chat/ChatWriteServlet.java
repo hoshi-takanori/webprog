@@ -51,6 +51,7 @@ public class ChatWriteServlet implements Servlet {
 			int numRows = st.executeUpdate();
 			if (numRows == 1) {
 				response.setRedirect("/");
+				response.addCookie("username=" + username);
 			} else {
 				response.setError(Response.STATUS_ERROR, "書き込み失敗しました。");
 			}
