@@ -219,9 +219,10 @@ public class BasicView {
 		response.setStatus(Response.STATUS_OK);
 		response.setHeader("Content-Type", "text/html; charset=UTF-8");
 
-		response.println("<!DOCTYPE html>");
+		response.println("<!doctype html>");
 		printOpenTag("html");
 		printOpenTag("head");
+		printOpenTag("meta", "charset", "utf-8");
 		printTag("title", title);
 		for (String tag : tags) {
 			response.println(tag);

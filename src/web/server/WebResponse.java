@@ -111,8 +111,10 @@ public class WebResponse implements Response {
 		buffer.delete(0, buffer.length());
 		bytes = null;
 
-		setHeader("Content-Type", "text/html");
+		setHeader("Content-Type", "text/html; charset=UTF-8");
+		println("<!doctype html>");
 		println("<html><head>");
+		println("<meta charset=\"utf-8\">");
 		println("<title>" + status + "</title>");
 		println("</head><body>");
 		println("<h1>" + status + "</h1>");
