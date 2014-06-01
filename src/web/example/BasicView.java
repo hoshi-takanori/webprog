@@ -144,9 +144,7 @@ public class BasicView {
 		for (String attr : attrs) {
 			list.add(attr);
 		}
-		String[] array = new String[list.size()];
-		list.toArray(array);
-		return openTag("input", array);
+		return openTag("input", list.toArray(new String[list.size()]));
 	}
 
 	/**
@@ -174,6 +172,22 @@ public class BasicView {
 	 */
 	public void printTag(String tag, String str, String... attrs) {
 		response.println(taggedStr(tag, str, attrs));
+	}
+
+	/**
+	 * form の開きタグ <form method="method" action="action" attrs> を出力する。
+	 * @param method form の method (GET や POST など)
+	 * @param action form の action
+	 * @param attrs おまけの属性 (onclick など)
+	 */
+	public void printOpenFormTag(String method, String action, String... attrs) {
+		String[] args = new String[4 + attrs.length];
+		args[0] = "method";
+		args[1] = method;
+		args[2] = "action";
+		args[3] = action;
+		System.arraycopy(attrs, 0, args, 4, attrs.length);
+		printOpenTag("form", args);
 	}
 
 	/**
