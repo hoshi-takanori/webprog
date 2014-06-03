@@ -63,7 +63,9 @@ public class SalesServlet implements Servlet {
 			}
 
 			// 購入履歴を取得する。
-			String sql = "select * from sales where user_id = ? order by date desc";
+			String sql = "select id, date, color " +
+					"from sales inner join sales_detail on sales.id = sales_id " +
+					"where user_id = ? order by date desc, detail_id";
 			try (PreparedStatement st = db.getConnection().prepareStatement(sql)) {
 				st.setInt(1, Integer.parseInt(names[0]));
 				try (ResultSet rs = st.executeQuery()) {
@@ -77,11 +79,18 @@ public class SalesServlet implements Servlet {
 					view.printTag("p", "購入履歴：");
 					view.printOpenTag("ul");
 					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					int prevId = -1;
 					while (rs.next()) {
 						int id = rs.getInt("id");
-						Timestamp date = rs.getTimestamp("date");
-						view.printTag("li", view.linkTag(dateFormat.format(date),
-								"/sales", "id", "" + id));
+						if (id != prevId) {
+							Timestamp date = rs.getTimestamp("date");
+							response.println(view.openTag("li") + view.linkTag(
+									dateFormat.format(date), "/sales", "id", "" + id));
+							prevId = id;
+						}
+						String color = rs.getString("color");
+						view.printTag("div", "", "style", "background: #" + color + "; " +
+								"border: solid 1px black; display: inline-block; height: 1em; width: 50px;");
 					}
 					view.printCloseTag("ul");
 
@@ -119,11 +128,14 @@ public class SalesServlet implements Servlet {
 			String[] names = db.getUserNames(sessionId);
 
 			// 購入履歴を取得する。
-			String sql1 = "select * from sales, users where user_id = users.id and sales.id = ?";
+			String sql1 = "select date, k_name " +
+					"from sales inner join users on user_id = users.id " +
+					"where sales.id = ? and user_id = ?";
 			Timestamp date;
 			String kanjiName;
 			try (PreparedStatement st = db.getConnection().prepareStatement(sql1)) {
 				st.setInt(1, salesId);
+				st.setInt(2, Integer.parseInt(names[0]));
 				try (ResultSet rs = st.executeQuery()) {
 					if (rs.next()) {
 						date = rs.getTimestamp("date");
@@ -136,7 +148,7 @@ public class SalesServlet implements Servlet {
 			}
 
 			// 購入詳細を取得する。
-			String sql2 = "select * from sales_detail where sales_id = ? order by detail_id";
+			String sql2 = "select color from sales_detail where sales_id = ? order by detail_id";
 			try (PreparedStatement st = db.getConnection().prepareStatement(sql2)) {
 				st.setInt(1, salesId);
 				try (ResultSet rs = st.executeQuery()) {

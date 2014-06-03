@@ -56,7 +56,7 @@ public class CartServlet implements Servlet {
 			String[] names = db.getUserNames(sessionId);
 
 			// カートから色を取得する。
-			String sql = "select * from cart where session_id = ? order by id";
+			String sql = "select id, color from cart where session_id = ? order by id";
 			try (PreparedStatement st = db.getConnection().prepareStatement(sql)) {
 				st.setString(1, sessionId);
 				try (ResultSet rs = st.executeQuery()) {

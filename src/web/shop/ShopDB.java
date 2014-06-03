@@ -24,7 +24,7 @@ public class ShopDB extends DBCommon {
 	 * @throws SQLException DB の処理時にエラーが発生
 	 */
 	public boolean checkSessionId(String sessionId) throws SQLException {
-		String sql = "select * from sessions where id = ?";
+		String sql = "select date from sessions where id = ?";
 		try (PreparedStatement st = getConnection().prepareStatement(sql)) {
 			st.setString(1, sessionId);
 			try (ResultSet rs = st.executeQuery()) {
@@ -65,7 +65,9 @@ public class ShopDB extends DBCommon {
 	 * @throws SQLException DB の処理時にエラーが発生
 	 */
 	public String[] getUserNames(String sessionId) throws SQLException {
-		String sql = "select user_id, name, k_name from users, sessions where users.id = user_id and sessions.id = ?";
+		String sql = "select user_id, name, k_name " +
+				"from users inner join sessions on users.id = user_id " +
+				"where sessions.id = ?";
 		try (PreparedStatement st = getConnection().prepareStatement(sql)) {
 			st.setString(1, sessionId);
 			try (ResultSet rs = st.executeQuery()) {
