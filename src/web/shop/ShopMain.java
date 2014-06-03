@@ -15,6 +15,7 @@ public class ShopMain {
 		WebServer server = new WebServer("web");
 		server.addServlet("/", new ColorServlet());
 		server.addServlet("/cart", new CartServlet());
+		server.addServlet("/login", new LoginServlet());
 		server.addServlet("/.*", new FileServlet("public"));
 		server.start();
 	}

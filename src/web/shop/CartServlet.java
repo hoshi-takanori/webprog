@@ -53,6 +53,7 @@ public class CartServlet implements Servlet {
 				response.setError(Response.STATUS_BAD_REQUEST, "セッション ID を取得できません。");
 				return;
 			}
+			String[] names = db.getUserNames(sessionId);
 
 			// カートから色を取得する。
 			String sql = "select * from cart where session_id = ? order by id";
@@ -63,7 +64,8 @@ public class CartServlet implements Servlet {
 					view.printHead(getName());
 
 					view.printTag("p", "色売り屋へようこそ。" +
-							view.linkTag("トップ", "/"));
+							view.linkTag("トップ", "/") + " | " +
+							view.linkTag(names != null ? names[2] + "さん" : "ログイン", "/login"));
 
 					String colors = null;
 					while (rs.next()) {

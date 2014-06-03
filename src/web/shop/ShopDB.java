@@ -57,4 +57,27 @@ public class ShopDB extends DBCommon {
 			throw new SQLException("セッション ID の生成に失敗しました。");
 		}
 	}
+
+	/**
+	 * ログイン済みユーザーのユーザー ID と名前を返す。
+	 * @param sessionId セッション ID
+	 * @return ログイン済みならばユーザー ID と名前、そうでなければ null
+	 * @throws SQLException DB の処理時にエラーが発生
+	 */
+	public String[] getUserNames(String sessionId) throws SQLException {
+		String sql = "select user_id, name, k_name from users, sessions where users.id = user_id and sessions.id = ?";
+		try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+			st.setString(1, sessionId);
+			try (ResultSet rs = st.executeQuery()) {
+				if (rs.next()) {
+					int userId = rs.getInt("user_id");
+					String name = rs.getString("name");
+					String kanjiName = rs.getString("k_name");
+					String[] names = { "" + userId, name, kanjiName };
+					return names;
+				}
+				return null;
+			}
+		}
+	}
 }

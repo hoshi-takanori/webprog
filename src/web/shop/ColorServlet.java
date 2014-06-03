@@ -60,10 +60,13 @@ public class ColorServlet implements Servlet {
 
 		// セッション ID とユーザー名を取得する。
 		String sessionId = request.getCookie("session_id");
+		String[] names = null;
 		try (ShopDB db = new ShopDB()) {
 			if (sessionId == null || ! db.checkSessionId(sessionId)) {
 				sessionId = db.generateSessionId();
 				response.addCookie("session_id=" + sessionId);
+			} else {
+				names = db.getUserNames(sessionId);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			response.setError(Response.STATUS_ERROR, e);
@@ -75,7 +78,8 @@ public class ColorServlet implements Servlet {
 		view.printHead(getName());
 
 		view.printTag("p", "色売り屋へようこそ。" +
-				view.linkTag("カート", "/cart"));
+				view.linkTag("カート", "/cart") + " | " +
+				view.linkTag(names != null ? names[2] + "さん" : "ログイン", "/login"));
 
 		// 色選択フォームを表示する。
 		view.printTag("p", "色を選んでください。または、" +
