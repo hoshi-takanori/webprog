@@ -71,6 +71,7 @@ public class LoginServlet implements Servlet {
 			} else {
 				// ログアウトボタンを表示する。
 				view.printTag("p", "ようこそ、" + names[2] + "さん。");
+				view.printTag("p", view.linkTag("購入履歴を見る", "/sales"));
 				view.printOpenFormTag("POST", "/login");
 				view.printInputTag("hidden", "logout", names[1]);
 				view.printInputTag("submit", null, "ログアウト");

@@ -16,6 +16,7 @@ public class ShopMain {
 		server.addServlet("/", new ColorServlet());
 		server.addServlet("/cart", new CartServlet());
 		server.addServlet("/login", new LoginServlet());
+		server.addServlet("/sales", new SalesServlet());
 		server.addServlet("/.*", new FileServlet("public"));
 		server.start();
 	}

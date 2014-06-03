@@ -100,6 +100,16 @@ public class CartServlet implements Servlet {
 
 					if (colors != null) {
 						view.printCloseTag("table");
+
+						if (names == null) {
+							view.printTag("p", "購入するには" +
+									view.linkTag("ログイン", "/login") + "してください。");
+						} else {
+							view.printOpenFormTag("POST", "/sales");
+							view.printInputTag("hidden", "colors", colors);
+							view.printInputTag("submit", null, "購入する");
+							view.printCloseTag("form");
+						}
 					} else {
 						view.printTag("p", "カートは空っぽです。");
 					}
