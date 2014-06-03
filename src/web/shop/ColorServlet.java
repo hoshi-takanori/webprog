@@ -1,5 +1,7 @@
 package web.shop;
 
+import java.sql.SQLException;
+
 import web.example.BasicView;
 import web.servlet.Request;
 import web.servlet.Response;
@@ -56,11 +58,24 @@ public class ColorServlet implements Servlet {
 		// 色コードを取得する。
 		int[] color = getRGBColor(request);
 
+		// セッション ID とユーザー名を取得する。
+		String sessionId = request.getCookie("session_id");
+		try (ShopDB db = new ShopDB()) {
+			if (sessionId == null || ! db.checkSessionId(sessionId)) {
+				sessionId = db.generateSessionId();
+				response.addCookie("session_id=" + sessionId);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			response.setError(Response.STATUS_ERROR, e);
+			return;
+		}
+
 		// ページを表示する。
 		BasicView view = new BasicView(response);
 		view.printHead(getName());
 
-		view.printTag("p", "色売り屋へようこそ。");
+		view.printTag("p", "色売り屋へようこそ。" +
+				view.linkTag("カート", "/cart"));
 
 		// 色選択フォームを表示する。
 		view.printTag("p", "色を選んでください。または、" +
@@ -81,6 +96,10 @@ public class ColorServlet implements Servlet {
 			view.printTag("p", "あなたの選んだ色は、#" + colorString + " です。");
 			view.printTag("div", "", "style", "background: #" + colorString +
 					"; border: solid 1px black; width: 200px; height: 50px;");
+			view.printOpenFormTag("POST", "/cart");
+			view.printInputTag("hidden", "color", colorString);
+			view.printInputTag("submit", null, "カートに追加");
+			view.printCloseTag("form");
 		}
 
 		view.printTail();

@@ -14,6 +14,7 @@ public class ShopMain {
 	public static void main(String[] args) {
 		WebServer server = new WebServer("web");
 		server.addServlet("/", new ColorServlet());
+		server.addServlet("/cart", new CartServlet());
 		server.addServlet("/.*", new FileServlet("public"));
 		server.start();
 	}
