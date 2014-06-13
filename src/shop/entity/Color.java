@@ -70,7 +70,7 @@ public class Color {
 	 * @return 緑
 	 */
 	public int getGreen() {
-		return red;
+		return green;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class Color {
 	 * @return 青
 	 */
 	public int getBlue() {
-		return red;
+		return blue;
 	}
 
 	/**
